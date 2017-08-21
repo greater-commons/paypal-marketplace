@@ -1,5 +1,235 @@
 package partner
 
+import (
+	"encoding/json"
+	"time"
+)
+
+type CustomerTypeData string
+
+const (
+	CustomerTypeConsumer CustomerTypeData = "CONSUMER"
+	CustomerTypeMerchant CustomerTypeData = "MERCHANT"
+)
+
+type NameOfAPartyData struct {
+	Prefix            string `json:"prefix"`
+	GivenName         string `json:"given_name"`
+	Surname           string `json:"surname"`
+	MiddleName        string `json:"middle_name"`
+	Suffix            string `json:"suffix"`
+	AlternameFullName string `json:"altername_full_name"`
+}
+
+type PhoneTypeData struct {
+	CountryCode     string `json:"country_code,omitempty"`
+	NationalNumber  string `json:"national_number,omitempty"`
+	ExtensionNumber string `json:"extension_number,omitempty"`
+}
+
+type OnboardingCommonUserPhoneData struct {
+	PhoneNumberDetails *PhoneTypeData `json:"phone_number_details,omitempty"`
+	PhoneType          string         `json:"phone_type,omitempty"`
+}
+
+type SimplePostalAddressData struct {
+	Line1       string `json:"line1,omitempty"`
+	Line2       string `json:"line2,omitempty"`
+	City        string `json:"city,omitempty"`
+	State       string `json:"state,omitempty"`
+	CountryCode string `json:"country_code,omitempty"`
+	PostalCode  string `json:"postal_cord,omitempty"`
+}
+
+type DateData struct {
+	EventType string    `json:"event_type,omitempty"`
+	EventDate time.Time `json:"event_date,omitempty"`
+}
+
+func (d *DateData) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		EventType string `json:"event_type,omitempty"`
+		EventDate string `json:"event_date,omitempty"`
+	}{
+		EventType: d.EventType,
+		EventDate: d.EventDate.Format(time.RFC3339),
+	})
+}
+
+func (d *DateData) UnmarshalJSON(b []byte) error {
+	temp := struct {
+		EventType string `json:"event_type,omitempty"`
+		EventDate string `json:"event_date,omitempty"`
+	}{}
+	err := json.Unmarshal(b, &temp)
+	if err != nil {
+		return err
+	}
+	d.EventType = temp.EventType
+	date, err := time.Parse(time.RFC3339, temp.EventDate)
+	if err != nil {
+		return err
+	}
+	d.EventDate = date
+	return nil
+}
+
+type IdentityDocumentData struct {
+	Type              string `json:"type,omitempty"`
+	Value             string `json:"value,omitempty"`
+	PartialValue      *bool  `json:"partial_value,omitempty"`
+	IssuerCountryCode string `json:"issuer_country_code,omitempty"`
+}
+
+type RelationData string
+
+const (
+	RelationMother RelationData = "MOTHER"
+)
+
+type MerchantRelationData struct {
+	Name                     *NameOfAPartyData `json:"name,omitempty"`
+	Relation                 RelationData      `json:"relation,omitempty"`
+	CountryCodeOfNationality string            `json:"country_code_of_nationality,omitempty"`
+}
+
+type PersonDetailsData struct {
+	EmailAddress              string                          `json:"email_address,omitempty"`
+	Name                      *NameOfAPartyData               `json:"name,omitempty"`
+	PhoneContacts             []OnboardingCommonUserPhoneData `json:"phone_contacts,omitempty"`
+	HomeAddress               *SimplePostalAddressData        `json:"home_address,omitempty"`
+	DateOfBirth               *DateData                       `json:"date_of_birth,omitempty"`
+	NationalityCountryCode    string                          `json:"nationality_country_code,omitempty"`
+	IdentityDocuments         []IdentityDocumentData          `json:"identity_documents,omitempty"`
+	AccountOwnerRelationships []MerchantRelationData          `json:"account_owner_relationships,omitempty"`
+}
+
+type BusinessTypeData string
+
+const (
+	BusinessTypeIndividual                  BusinessTypeData = "INDIVIDUAL"
+	BusinessTypeProprietorship              BusinessTypeData = "PROPRIETORSHIP"
+	BusinessTypePartnership                 BusinessTypeData = "PARTNERSHIP"
+	BusinessTypeCorporation                 BusinessTypeData = "CORPORATION"
+	BusinessTypeNonprofit                   BusinessTypeData = "NONPROFIT"
+	BusinessTypeGovernment                  BusinessTypeData = "GOVERNMENT"
+	BusinessTypePublicCompany               BusinessTypeData = "PUBLIC_COMPANY"
+	BusinessTypeRegisteredCooperative       BusinessTypeData = "REGISTERED_COOPERATIVE"
+	BusinessTypeProprietoryCompany          BusinessTypeData = "PROPRIETORY_COMPANY"
+	BusinessTypeAssociation                 BusinessTypeData = "ASSOCIATION"
+	BusinessTypePrivateCorporation          BusinessTypeData = "PRIVATE_CORPORATION"
+	BusinessTypeLimitedPartnership          BusinessTypeData = "LIMITED_PARTNERSHIP"
+	BusinessTypeLimitedLiabilityProprietors BusinessTypeData = "LIMITED_LIABILITY_PROPRIETORS"
+	BusinessTypeLimitedLiabilityPartnership BusinessTypeData = "LIMITED_LIABILITY_PARTNERSHIP"
+	BusinessTypePublicCorporation           BusinessTypeData = "PUBLIC_CORPORATION"
+	BusinessTypeOtherCorporateBody          BusinessTypeData = "OTHER_CORPORATE_BODY"
+)
+
+type BusinessNameTypeData string
+
+const (
+	BusinessNameTypeLegal            BusinessNameTypeData = "LEGAL"
+	BusinessNameTypeDoingBusinessAs  BusinessNameTypeData = "DOING_BUSINESS_AS"
+	BusinessNameTypeStockTradingName BusinessNameTypeData = "STOCK_TRADING_NAME"
+)
+
+type BusinessNameData struct {
+	Type BusinessNameTypeData `json:"type,omitempty"`
+	Name string               `json:"name,omitempty"`
+}
+
+type CurrencyData struct {
+	Currency string `json:"currency,omitempty"`
+	Value    string `json:value,omitempty"`
+}
+
+type CurrencyRangeData struct {
+	MinimumAmount *CurrencyData `json:"minimum_amount,omitempty"`
+	MaximumAmount *CurrencyData `json:"maximum_amount,omitempty"`
+}
+
+type EmailRoleData string
+
+const (
+	EmailRoleCustomerService EmailRoleData = "CUSTOMER_SERVICE"
+)
+
+type EmailData struct {
+	EmailAddress string        `json:"email_address,omitempty"`
+	Role         EmailRoleData `json:"role,omitempty"`
+}
+
+type BusinessDetailsData struct {
+	PhoneContacts             []OnboardingCommonUserPhoneData `json:"phone_contacts,omitempty"`
+	BusinessAddress           *SimplePostalAddressData        `json:"business_address,omitempty"`
+	BusinessType              BusinessTypeData                `json:"business_type,omitempty"`
+	Category                  string                          `json:"category,omitempty"`
+	SubCategory               string                          `json:"sub_category,omitempty"`
+	Names                     []BusinessNameData              `json:"names,omitempty"`
+	BusinessDescription       string                          `json:"business_description,omitempty"`
+	EventDates                []DateData                      `json:"event_dates,omitempty"`
+	WebsiteURLS               []string                        `json:"website_urls"`
+	AnnualSalesVolumeRange    *CurrencyRangeData              `json:"annual_sales_volume_range,omitempty"`
+	AverageMonthlyVolumeRange *CurrencyRangeData              `json:"average_monthly_volume_range,omitempty"`
+	IdentityDocuments         []IdentityDocumentData          `json:"identity_documents,omitempty"`
+	EmailContacts             []EmailData                     `json:"email_contacts,omitempty"`
+}
+
+type BankAccountTypeData string
+
+const (
+	BankAccountTypeChecking BankAccountTypeData = "CHECKING"
+	BankAccountTypeSavings  BankAccountTypeData = "SAVINGS"
+)
+
+type BankDetailsData struct {
+	NickName       string                   `json:"nick_name,omitempty"`
+	AccountNumber  string                   `json:"account_number,omitempty"`
+	AccountType    BankAccountTypeData      `json:"account_type,omitempty"`
+	CurrencyCode   string                   `json:"currency_code,omitempty"`
+	Identifiers    []string                 `json:"identifiers,omitempty"`
+	BranchLocation *SimplePostalAddressData `json:"branch_location,omitempty"`
+	MandateAgreed  *bool                    `json:"mandate_agreed,omitempty"`
+}
+
+type FinancialInstrumentDataType struct {
+	BankDetails *BankDetailsData `json:"bank_details,omitempty"`
+}
+
+type AccountIdentifierTypeData string
+
+const (
+	AccountIdentifierTypePayerID AccountIdentifierTypeData = "PAYER_ID"
+)
+
+type AccountIdentifierData struct {
+	Type  AccountIdentifierTypeData `json:"type,omitempty"`
+	Value string                    `json:"value,omitempty"`
+}
+
+type PartnerSpecificIdentifierTypeData string
+
+const (
+	PartnerSpecificIdentifierTypeTrackingID       PartnerSpecificIdentifierTypeData = "TRACKING_ID"
+	PartnerSpecificIdentifierTypeAccountLinkingID PartnerSpecificIdentifierTypeData = "ACCOUNT_LINKING_ID"
+)
+
+type PartnerSpecificIdentifierData struct {
+	Type  PartnerSpecificIdentifierTypeData `json:"type,omitempty"`
+	Value string                            `json:"value,omitempty"`
+}
+
+type UserData struct {
+	CustomerType               CustomerTypeData                `json:"customer_type,omitempty"`
+	PersonDetails              *PersonDetailsData              `json:"person_details,omitempty"`
+	BusinessDetails            *BusinessDetailsData            `json:"business_details,omitempty"`
+	FinancialInstrumentData    *FinancialInstrumentDataType    `json:"financial_instrument_data,omitempty"`
+	PreferredLanguageCode      string                          `json:"preferred_language_code,omitempty"`
+	PrimaryCurrencyCode        string                          `json:"primary_currency_code,omitempty"`
+	ReferralUserPayerID        *AccountIdentifierData          `json:"referral_user_payer_id,omitempty"`
+	PartnerSpecificIdentifiers []PartnerSpecificIdentifierData `json:"partner_specific_identifiers,omitempty"`
+}
+
 type CapabilityData string
 
 const (
@@ -148,6 +378,7 @@ type ProductsToOnboardData struct {
 }
 
 type CreatePartnerReferralParams struct {
+	CustomerData            *UserData                    `json:"customer_data,omitempty"`
 	RequestedCapabilities   []CustomerCapabilitiesData   `json:"requested_capabilities,omitempty"`
 	WebExperiencePreference *WebExperiencePreferenceData `json:"web_experience_preference,omitempty"`
 	CollectedConsents       []LegalConsentData           `json:"collected_consents,omitempty"`

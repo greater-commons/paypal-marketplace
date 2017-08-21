@@ -31,8 +31,8 @@ const (
 )
 
 type RestAPIIntegrationData struct {
-	IntegrationMethod IntegrationMethodData `json:"integration_method"`
-	IntegrationType   IntegrationTypeData   `json:"integration_type"`
+	IntegrationMethod *IntegrationMethodData `json:"integration_method,omitempty"`
+	IntegrationType   *IntegrationTypeData   `json:"integration_type,omitempty"`
 }
 
 type ReferralDataClassicPermissionData string
@@ -58,11 +58,11 @@ const (
 )
 
 type SupportedClassicPermissionsData struct {
-	ReferralDataClassicPermissions ReferralDataClassicPermissionData `json:"referral_data-classic_permission_enum"`
+	ReferralDataClassicPermissions *ReferralDataClassicPermissionData `json:"referral_data-classic_permission_enum,omitempty"`
 }
 
 type ClassicThirdPartyDetailsData struct {
-	PermissionList []SupportedClassicPermissionsData `json:"permission_list"`
+	PermissionList []SupportedClassicPermissionsData `json:"permission_list,omitempty"`
 }
 
 type ClassicFirstPartyDetailsData string
@@ -74,26 +74,82 @@ const (
 
 type ReferralDataRestFeaturesData string
 
-type RestThirdPartyDetails struct {
-	PartnerClientID string                         `json:"partner_client_id"`
-	FeatureList     []ReferralDataRestFeaturesData `json:"feature_list"`
+const (
+	ReferralDataRestFeaturesPayment       ReferralDataRestFeaturesData = "PAYMENT"
+	ReferralDataRestFeaturesRefund        ReferralDataRestFeaturesData = "REFUND"
+	ReferralDataRestFeaturesFuturePayment ReferralDataRestFeaturesData = "FUTURE_PAYMENT"
+	ReferralDataRestFeaturesDirectPayment ReferralDataRestFeaturesData = "DIRECT_PAYMENT"
+	ReferralDataRestFeaturesPartnerFee    ReferralDataRestFeaturesData = "PARTNER_FEE"
+)
+
+type RestThirdPartyDetailsData struct {
+	PartnerClientID string                         `json:"partner_client_id,omitempty"`
+	FeatureList     []ReferralDataRestFeaturesData `json:"feature_list,omitempty"`
 }
 
 type IntegrationDetailsData struct {
-	PartnerID                 string                       `json:"partner_id"`
-	ClassicAPIIntegrationType ClassicIntegrationTypeData   `json:"classic_api_integration_type"`
-	RestAPIIntegration        RestAPIIntegrationData       `json:"rest_api_integration"`
-	ClassicThirdPartyDetails  ClassicThirdPartyDetailsData `json:"classic_third_party_details"`
-	ClassicFirstPartyDetails  ClassicFirstParyDetailsData  `json:"classic_first_party_details"`
-	RestThirdPartyDetails     RestThirdPartyDetailsData    `json:"rest_third_party_details"`
+	PartnerID                 string                        `json:"partner_id"`
+	ClassicAPIIntegrationType *ClassicIntegrationTypeData   `json:"classic_api_integration_type,omitempty"`
+	RestAPIIntegration        *RestAPIIntegrationData       `json:"rest_api_integration,omitempty"`
+	ClassicThirdPartyDetails  *ClassicThirdPartyDetailsData `json:"classic_third_party_details,omitempty"`
+	ClassicFirstPartyDetails  *ClassicFirstPartyDetailsData `json:"classic_first_party_details,omitempty"`
+	RestThirdPartyDetails     *RestThirdPartyDetailsData    `json:"rest_third_party_details,omitempty"`
 }
 
-type CustomerCapabilities struct {
-	Capability               CapabilityData         `json:"capability"`
-	ApiIntegrationPreference IntegrationDetailsData `json:"api_integration_preference"`
-	BillingAgreement         BillingAgreementData   `json:"billing_agreement"`
+type BillingExperiencePreferenceData struct {
+	ExperienceID      string `json:"experience_id,omitempty"`
+	BillingContextSet *bool  `json:"billing_context_set,omitempty"`
+}
+
+type BillingAgreementData struct {
+	Description                 string                           `json:"description,omitempty"`
+	BillingExperiencePreference *BillingExperiencePreferenceData `json:"billing_experience_preference,omitempty"`
+	MerchantCustomData          string                           `json:"merchant_custom_data,omitempty"`
+	ApprovalURL                 string                           `json:"approval_url,omitempty"`
+	ECToken                     string                           `json:"ec_token,omitempty"`
+}
+
+type CustomerCapabilitiesData struct {
+	Capability               *CapabilityData         `json:"capability,omitempty"`
+	ApiIntegrationPreference *IntegrationDetailsData `json:"api_integration_preference,omitempty"`
+	BillingAgreement         *BillingAgreementData   `json:"billing_agreement,omitempty"`
+}
+
+type WebExperiencePreferenceData struct {
+	PartnerLogoURL          string `json:"partner_logo_url,omitempty"`
+	ReturnURL               string `json:"return_url,omitempty"`
+	ReturnURLDescription    string `json:"return_url_description,omitempty"`
+	ActionRenewalURL        string `json:"action_renewal_url,omitempty"`
+	ShowAddCreditCard       *bool  `json:"show_add_credit_card,omitempty"`
+	ShowMobileConfirm       *bool  `json:"show_mobile_confirm,omitempty"`
+	UseMiniBrowser          *bool  `json:"use_mini_browser,omitempty"`
+	UseHuaEmailConfirmation *bool  `json:"use_hua_email_confirmation,omitempty"`
+}
+
+type LegalConsentTypeData string
+
+const (
+	LegalConsentTypeShareDataConsent LegalConsentTypeData = "SHARE_DATA_CONSENT"
+)
+
+type LegalConsentData struct {
+	Type    LegalConsentTypeData `json:"type"`
+	Granted *bool                `json:"granted,omitempty"`
+}
+
+type ReferralDataProductNameData string
+
+const (
+	ReferralDataExpressCheckout ReferralDataProductNameData = "EXPRESS_CHECKOUT"
+)
+
+type ProductsToOnboardData struct {
+	ReferralDataProductName ReferralDataProductNameData `json:"referral_data-product_name,omitempty"`
 }
 
 type CreatePartnerReferralParams struct {
-	RequestedCapabilities []CustomerCapabilities `json:"requested_capabilities"`
+	RequestedCapabilities   []CustomerCapabilitiesData   `json:"requested_capabilities,omitempty"`
+	WebExperiencePreference *WebExperiencePreferenceData `json:"web_experience_preference,omitempty"`
+	CollectedConsents       []LegalConsentData           `json:"collected_consents,omitempty"`
+	Products                []ProductsToOnboardData      `json:"products,omitempty"`
 }

@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"path"
 	"strconv"
 
 	"golang.org/x/oauth2/clientcredentials"
@@ -43,7 +42,7 @@ func NewClient(ctx context.Context, clientID, clientSecret, apiBase string) *Cli
 	conf := &clientcredentials.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
-		TokenURL:     path.Join(apiBase, tokenRoute),
+		TokenURL:     apiBase + tokenRoute,
 	}
 	return &Client{
 		client:  conf.Client(ctx),
@@ -68,6 +67,10 @@ func (r *request) do(ctx context.Context) (*response, error) {
 	req, err := http.NewRequest(r.method, r.client.apiBase+r.endpoint, r.body)
 	if err != nil {
 		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	if r.client.BNCode != "" {
+		req.Header.Set("PayPal-Partner-Attribution-Id", r.client.BNCode)
 	}
 	res, err := r.client.client.Do(req)
 	if err != nil {

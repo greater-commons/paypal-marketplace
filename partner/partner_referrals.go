@@ -261,8 +261,8 @@ const (
 )
 
 type RestAPIIntegrationData struct {
-	IntegrationMethod *IntegrationMethodData `json:"integration_method,omitempty"`
-	IntegrationType   *IntegrationTypeData   `json:"integration_type,omitempty"`
+	IntegrationMethod IntegrationMethodData `json:"integration_method,omitempty"`
+	IntegrationType   IntegrationTypeData   `json:"integration_type,omitempty"`
 }
 
 type ReferralDataClassicPermissionData string
@@ -340,7 +340,7 @@ type BillingAgreementData struct {
 }
 
 type CustomerCapabilitiesData struct {
-	Capability               *CapabilityData         `json:"capability,omitempty"`
+	Capability               CapabilityData          `json:"capability,omitempty"`
 	ApiIntegrationPreference *IntegrationDetailsData `json:"api_integration_preference,omitempty"`
 	BillingAgreement         *BillingAgreementData   `json:"billing_agreement,omitempty"`
 }
@@ -364,7 +364,7 @@ const (
 
 type LegalConsentData struct {
 	Type    LegalConsentTypeData `json:"type"`
-	Granted *bool                `json:"granted,omitempty"`
+	Granted bool                 `json:"granted,omitempty"`
 }
 
 type ReferralDataProductNameData string
@@ -373,16 +373,12 @@ const (
 	ReferralDataExpressCheckout ReferralDataProductNameData = "EXPRESS_CHECKOUT"
 )
 
-type ProductsToOnboardData struct {
-	ReferralDataProductName ReferralDataProductNameData `json:"referral_data-product_name,omitempty"`
-}
-
 type CreatePartnerReferralParams struct {
-	CustomerData            *UserData                    `json:"customer_data,omitempty"`
-	RequestedCapabilities   []CustomerCapabilitiesData   `json:"requested_capabilities,omitempty"`
-	WebExperiencePreference *WebExperiencePreferenceData `json:"web_experience_preference,omitempty"`
-	CollectedConsents       []LegalConsentData           `json:"collected_consents,omitempty"`
-	Products                []ProductsToOnboardData      `json:"products,omitempty"`
+	CustomerData            *UserData                     `json:"customer_data,omitempty"`
+	RequestedCapabilities   []CustomerCapabilitiesData    `json:"requested_capabilities,omitempty"`
+	WebExperiencePreference *WebExperiencePreferenceData  `json:"web_experience_preference,omitempty"`
+	CollectedConsents       []LegalConsentData            `json:"collected_consents,omitempty"`
+	Products                []ReferralDataProductNameData `json:"products,omitempty"`
 }
 
 type CreatePartnerReferralResponse struct {

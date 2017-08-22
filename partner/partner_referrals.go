@@ -384,3 +384,31 @@ type CreatePartnerReferralParams struct {
 	CollectedConsents       []LegalConsentData           `json:"collected_consents,omitempty"`
 	Products                []ProductsToOnboardData      `json:"products,omitempty"`
 }
+
+type CreatePartnerReferralResponse struct {
+	RedirectURL string
+	GetURL      string
+}
+
+func (c *CreatePartnerReferralResponse) UnmarshalJSON(b []byte) error {
+	response := struct {
+		Links []struct {
+			Href        string
+			Rel         string
+			Method      string
+			Description string
+		}
+	}{}
+	err := json.Unmarshal(b, &response)
+	if err != nil {
+		return err
+	}
+	for _, v := range response.Links {
+		if v.Rel == "self" {
+			c.GetURL = v.Href
+		} else if v.Rel == "action_url" {
+			c.RedirectURL = v.Href
+		}
+	}
+	return nil
+}

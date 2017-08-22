@@ -1,10 +1,13 @@
 package market
 
 import (
+	"bytes"
 	"context"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"path"
+	"strconv"
 
 	"golang.org/x/oauth2/clientcredentials"
 )
@@ -22,6 +25,15 @@ type Client struct {
 	client  *http.Client
 	apiBase string
 	BNCode  string
+}
+
+type BadResponse struct {
+	Status int
+	Body   string
+}
+
+func (b *BadResponse) Error() string {
+	return "Bad response from Paypal, status code: " + strconv.Itoa(b.Status) + ", body is:\n" + b.Body
 }
 
 // NewClient creates a new Paypal marketplace client.
@@ -46,10 +58,29 @@ type request struct {
 	body     io.Reader
 }
 
-func (r *request) do(ctx context.Context, res interface{}) error {
-	req := http.NewRequest(r.method, r.client.apiBase+r.endpoint, r.body)
-	response, err := r.client.client.Do(req)
+type response struct {
+	status  int
+	headers http.Header
+	body    io.ReadSeeker
+}
+
+func (r *request) do(ctx context.Context) (*response, error) {
+	req, err := http.NewRequest(r.method, r.client.apiBase+r.endpoint, r.body)
 	if err != nil {
-		return err
+		return nil, err
 	}
+	res, err := r.client.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	resData, err := ioutil.ReadAll(io.LimitReader(res.Body, 5*1024*1024)) // Read at most 5 MB
+	if err != nil {
+		return nil, err
+	}
+	return &response{
+		status:  res.StatusCode,
+		headers: res.Header,
+		body:    bytes.NewReader(resData),
+	}, nil
 }

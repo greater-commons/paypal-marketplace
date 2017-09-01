@@ -19,5 +19,17 @@ func GetTestSecret() string {
 }
 
 func GetTestBNCode() string {
-	return os.Getenv("PAYPAL_BN_CODE")
+	bn := os.Getenv("PAYPAL_BN_CODE")
+	if len(bn) == 0 {
+		panic("PAYPAL_BN_CODE environment is not set, but is needed to run tests!\n")
+	}
+	return bn
+}
+
+func GetTestPayerID() string {
+	pid := os.Getenv("PAYPAL_PAYER_ID")
+	if len(pid) == 0 {
+		panic("PAYPAL_PAYER_ID environment variable is not set, but is needed to run tests!\n")
+	}
+	return pid
 }

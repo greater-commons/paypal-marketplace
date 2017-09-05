@@ -21,15 +21,25 @@ type NameOfAPartyData struct {
 	AlternameFullName string `json:"alternate_full_name,omitempty"`
 }
 
-type PhoneTypeData struct {
+type PhoneDetailsData struct {
 	CountryCode     string `json:"country_code,omitempty"`
 	NationalNumber  string `json:"national_number,omitempty"`
 	ExtensionNumber string `json:"extension_number,omitempty"`
 }
 
+type PhoneTypeData string
+
+const (
+	PhoneTypeFax    PhoneTypeData = "FAX"
+	PhoneTypeHome   PhoneTypeData = "HOME"
+	PhoneTypeMobile PhoneTypeData = "MOBILE"
+	PhoneTypeOther  PhoneTypeData = "OTHER"
+	PhoneTypePager  PhoneTypeData = "PAGER"
+)
+
 type OnboardingCommonUserPhoneData struct {
-	PhoneNumberDetails *PhoneTypeData `json:"phone_number_details,omitempty"`
-	PhoneType          string         `json:"phone_type,omitempty"`
+	PhoneNumberDetails *PhoneDetailsData `json:"phone_number_details,omitempty"`
+	PhoneType          PhoneTypeData     `json:"phone_type,omitempty"`
 }
 
 type SimplePostalAddressData struct {
@@ -38,7 +48,7 @@ type SimplePostalAddressData struct {
 	City        string `json:"city,omitempty"`
 	State       string `json:"state,omitempty"`
 	CountryCode string `json:"country_code,omitempty"`
-	PostalCode  string `json:"postal_cord,omitempty"`
+	PostalCode  string `json:"postal_code,omitempty"`
 }
 
 type EventTypeData string
@@ -61,7 +71,7 @@ func (d *DateData) MarshalJSON() ([]byte, error) {
 		EventDate string        `json:"event_date,omitempty"`
 	}{
 		EventType: d.EventType,
-		EventDate: d.EventDate.Format(time.RFC3339),
+		EventDate: d.EventDate.Format(time.RFC3339Nano),
 	})
 }
 
@@ -75,7 +85,7 @@ func (d *DateData) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	d.EventType = temp.EventType
-	date, err := time.Parse(time.RFC3339, temp.EventDate)
+	date, err := time.Parse(time.RFC3339Nano, temp.EventDate)
 	if err != nil {
 		return err
 	}
@@ -83,11 +93,24 @@ func (d *DateData) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+type IdentityDocumentType string
+
+const (
+	IdentityTypeSocialSecurityNumber           IdentityDocumentType = "SOCIAL_SECURITY_NUMBER"
+	IdentityTypeEmploymentIdentificationNumber IdentityDocumentType = "EMPLOYMENT_IDENTIFICATION_NUMBER"
+	IdentityTypeTaxIdentificationNumber        IdentityDocumentType = "TAX_IDENTIFICATION_NUMBER"
+	IdentityTypePassportNumber                 IdentityDocumentType = "PASSPORT_NUMBER"
+	IdentityTypePensionFundID                  IdentityDocumentType = "PENSION_FUND_ID"
+	IdentityTypeMedicalInsuranceID             IdentityDocumentType = "MEDICAL_INSURANCE_ID"
+	IdentityTypeCNPJ                           IdentityDocumentType = "CNPJ"
+	IdentityTypeCPF                            IdentityDocumentType = "CPF"
+)
+
 type IdentityDocumentData struct {
-	Type              string `json:"type,omitempty"`
-	Value             string `json:"value,omitempty"`
-	PartialValue      *bool  `json:"partial_value,omitempty"`
-	IssuerCountryCode string `json:"issuer_country_code,omitempty"`
+	Type              IdentityDocumentType `json:"type,omitempty"`
+	Value             string               `json:"value,omitempty"`
+	PartialValue      bool                 `json:"partial_value"`
+	IssuerCountryCode string               `json:"issuer_country_code,omitempty"`
 }
 
 type RelationData string
@@ -892,7 +915,7 @@ type BusinessNameData struct {
 
 type CurrencyData struct {
 	Currency string `json:"currency,omitempty"`
-	Value    string `json:value,omitempty"`
+	Value    string `json:"value,omitempty"`
 }
 
 type CurrencyRangeData struct {
@@ -919,7 +942,7 @@ type BusinessDetailsData struct {
 	Names                     []BusinessNameData              `json:"names,omitempty"`
 	BusinessDescription       string                          `json:"business_description,omitempty"`
 	EventDates                []DateData                      `json:"event_dates,omitempty"`
-	WebsiteURLS               []string                        `json:"website_urls"`
+	WebsiteURLS               []string                        `json:"website_urls,omitempty"`
 	AnnualSalesVolumeRange    *CurrencyRangeData              `json:"annual_sales_volume_range,omitempty"`
 	AverageMonthlyVolumeRange *CurrencyRangeData              `json:"average_monthly_volume_range,omitempty"`
 	IdentityDocuments         []IdentityDocumentData          `json:"identity_documents,omitempty"`
@@ -1148,7 +1171,7 @@ const (
 
 type LegalConsentData struct {
 	Type    LegalConsentTypeData `json:"type"`
-	Granted bool                 `json:"granted,omitempty"`
+	Granted bool                 `json:"granted"`
 }
 
 type ReferralDataProductNameData string

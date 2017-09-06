@@ -1112,11 +1112,16 @@ const (
 type ReferralDataRestFeaturesData string
 
 const (
-	ReferralDataRestFeaturesPayment       ReferralDataRestFeaturesData = "PAYMENT"
-	ReferralDataRestFeaturesRefund        ReferralDataRestFeaturesData = "REFUND"
-	ReferralDataRestFeaturesFuturePayment ReferralDataRestFeaturesData = "FUTURE_PAYMENT"
-	ReferralDataRestFeaturesDirectPayment ReferralDataRestFeaturesData = "DIRECT_PAYMENT"
-	ReferralDataRestFeaturesPartnerFee    ReferralDataRestFeaturesData = "PARTNER_FEE"
+	ReferralDataRestFeaturesPayment                   ReferralDataRestFeaturesData = "PAYMENT"
+	ReferralDataRestFeaturesRefund                    ReferralDataRestFeaturesData = "REFUND"
+	ReferralDataRestFeaturesFuturePayment             ReferralDataRestFeaturesData = "FUTURE_PAYMENT"
+	ReferralDataRestFeaturesDirectPayment             ReferralDataRestFeaturesData = "DIRECT_PAYMENT"
+	ReferralDataRestFeaturesPartnerFee                ReferralDataRestFeaturesData = "PARTNER_FEE"
+	ReferralDataRestFeaturesDelayDisbursement         ReferralDataRestFeaturesData = "DELAY_FUNDS_DISBURSEMENT"
+	ReferralDataRestFeaturesSweepFunds                ReferralDataRestFeaturesData = "SWEEP_FUNDS_EXTERNAL_SINK"
+	ReferralDataRestFeaturesAdvancedTransactionSearch ReferralDataRestFeaturesData = "ADVANCED_TRANSACTIONS_SEARCH"
+	ReferralDataRestFeaturesReadDispute               ReferralDataRestFeaturesData = "READ_SELLER_DISPUTE"
+	ReferralDataRestFeaturesUpdateDispute             ReferralDataRestFeaturesData = "UPDATE_SELLER_DISPUTE"
 )
 
 type RestThirdPartyDetailsData struct {
@@ -1211,6 +1216,41 @@ func (c *CreatePartnerReferralResponse) UnmarshalJSON(b []byte) error {
 			c.GetURL = v.Href
 		} else if v.Rel == "action_url" {
 			c.RedirectURL = v.Href
+		}
+	}
+	return nil
+}
+
+type GetPartnerReferralResponse struct {
+	PartnerReferralID string
+	SubmitterPayerID  string
+	ReferralData      *CreatePartnerReferralParams
+	RedirectURL       string
+}
+
+func (g *GetPartnerReferralResponse) UnmarshalJSON(b []byte) error {
+	response := struct {
+		PartnerReferralID string
+		SubmitterPayerID  string
+		ReferralData      *CreatePartnerReferralParams
+		Links             []struct {
+			Href        string
+			Rel         string
+			Method      string
+			Description string
+		}
+	}{}
+	err := json.Unmarshal(b, &response)
+	if err != nil {
+		return err
+	}
+	g.PartnerReferralID = response.PartnerReferralID
+	g.SubmitterPayerID = response.SubmitterPayerID
+	g.ReferralData = response.ReferralData
+	for _, v := range response.Links {
+		if v.Rel == "action_url" {
+			g.RedirectURL = v.Href
+			break
 		}
 	}
 	return nil

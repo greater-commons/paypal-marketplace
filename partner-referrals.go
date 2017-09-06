@@ -47,3 +47,32 @@ func (c *Client) CreatePartnerReferral(ctx context.Context, params *partner.Crea
 		Body:   string(errorData),
 	}
 }
+
+func (c *Client) GetPartnerReferral(ctx context.Context, partnerReferralID string) (*partner.GetPartnerReferralResponse, error) {
+	r := &request{
+		client:   c,
+		method:   http.MethodGet,
+		endpoint: createPartnerReferralRoute + "/" + partnerReferralID,
+	}
+	res, err := r.do(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if res.status == http.StatusOK {
+		r := &partner.GetPartnerReferralResponse{}
+		err = json.NewDecoder(res.body).Decode(r)
+		if err != nil {
+			return nil, err
+		}
+		return r, nil
+	}
+
+	errorData, err := ioutil.ReadAll(res.body)
+	if err != nil {
+		return nil, err
+	}
+	return nil, &BadResponse{
+		Status: res.status,
+		Body:   string(errorData),
+	}
+}

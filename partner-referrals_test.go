@@ -119,6 +119,7 @@ func TestCreatePartnerReferral(t *testing.T) {
 							partner.ReferralDataRestFeaturesPayment,
 							partner.ReferralDataRestFeaturesRefund,
 							partner.ReferralDataRestFeaturesPartnerFee,
+							partner.ReferralDataRestFeaturesDelayDisbursement,
 						},
 					},
 				},

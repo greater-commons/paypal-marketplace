@@ -2,6 +2,9 @@ package partner
 
 import (
 	"encoding/json"
+	"errors"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -1194,8 +1197,8 @@ type CreatePartnerReferralParams struct {
 }
 
 type CreatePartnerReferralResponse struct {
-	RedirectURL string
-	GetURL      string
+	RedirectURL       string
+	PartnerReferralID string
 }
 
 func (c *CreatePartnerReferralResponse) UnmarshalJSON(b []byte) error {
@@ -1213,7 +1216,15 @@ func (c *CreatePartnerReferralResponse) UnmarshalJSON(b []byte) error {
 	}
 	for _, v := range response.Links {
 		if v.Rel == "self" {
-			c.GetURL = v.Href
+			u, err := url.Parse(v.Href)
+			if err != nil {
+				return err
+			}
+			const prefix = "/v1/customer/partner-referrals/"
+			if !strings.HasPrefix(u.Path, prefix) {
+				return errors.New("Bad path in partner referral ID: " + u.Path)
+			}
+			c.PartnerReferralID = u.Path[len(prefix):]
 		} else if v.Rel == "action_url" {
 			c.RedirectURL = v.Href
 		}

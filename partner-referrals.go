@@ -29,7 +29,7 @@ func (c *Client) CreatePartnerReferral(ctx context.Context, params *partner.Crea
 	if err != nil {
 		return nil, err
 	}
-	if res.status == 201 {
+	if res.status == http.StatusCreated {
 		r := &partner.CreatePartnerReferralResponse{}
 		err = json.NewDecoder(res.body).Decode(r)
 		if err != nil {

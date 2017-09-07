@@ -135,8 +135,14 @@ func TestCreatePartnerReferral(t *testing.T) {
 			partner.ReferralDataExpressCheckout,
 		},
 	})
-	t.Logf("%+v", r)
 	if err != nil {
 		t.Fatal("Error attempting to create a partner referral:", err)
 	}
+	t.Logf("Response after creating: %+v\n", r)
+
+	pr, err := c.GetPartnerReferral(ctx, r.PartnerReferralID)
+	if err != nil {
+		t.Fatal("Error attempting to get a partner referral:", err)
+	}
+	t.Logf("Gotten Partner Referral: %+v\n", pr)
 }

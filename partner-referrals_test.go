@@ -103,6 +103,12 @@ func TestCreatePartnerReferral(t *testing.T) {
 				Type:  partner.AccountIdentifierTypePayerID,
 				Value: GetTestPayerID(),
 			},
+			PartnerSpecificIdentifiers: []partner.PartnerSpecificIdentifierData{
+				{
+					Type:  partner.PartnerSpecificIdentifierTypeTrackingID,
+					Value: strconv.FormatInt(num.Int64(), 10),
+				},
+			},
 		},
 		RequestedCapabilities: []partner.CustomerCapabilitiesData{
 			{
@@ -139,10 +145,17 @@ func TestCreatePartnerReferral(t *testing.T) {
 		t.Fatal("Error attempting to create a partner referral:", err)
 	}
 	t.Logf("Response after creating: %+v\n", r)
+}
 
-	pr, err := c.GetPartnerReferral(ctx, r.PartnerReferralID)
+func TestGetPartnerReferral(t *testing.T) {
+	ctx := context.Background()
+
+	c := NewClient(ctx, GetTestClientID(), GetTestSecret(), Sandbox)
+	c.BNCode = GetTestBNCode()
+
+	pr, err := c.GetPartnerReferral(ctx, GetPartnerReferralID(t))
 	if err != nil {
 		t.Fatal("Error attempting to get a partner referral:", err)
 	}
-	t.Logf("Gotten Partner Referral: %+v\n", pr)
+	t.Logf("Partner Referral: %+v\n", pr)
 }

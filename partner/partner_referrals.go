@@ -985,6 +985,41 @@ func (b *BusinessDetailsData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&data)
 }
 
+func (b *BusinessDetailsData) UnmarshalJSON(bs []byte) error {
+	data := struct {
+		PhoneContacts             []OnboardingCommonUserPhoneData `json:"phone_contacts,omitempty"`
+		BusinessAddress           *SimplePostalAddressData        `json:"business_address,omitempty"`
+		BusinessType              BusinessTypeData                `json:"business_type,omitempty"`
+		Category                  string                          `json:"category,omitempty"`
+		SubCategory               string                          `json:"sub_category,omitempty"`
+		Names                     []BusinessNameData              `json:"names,omitempty"`
+		BusinessDescription       string                          `json:"business_description,omitempty"`
+		EventDates                []DateData                      `json:"event_dates,omitempty"`
+		WebsiteURLS               []string                        `json:"website_urls"`
+		AnnualSalesVolumeRange    *CurrencyRangeData              `json:"annual_sales_volume_range,omitempty"`
+		AverageMonthlyVolumeRange *CurrencyRangeData              `json:"average_monthly_volume_range,omitempty"`
+		IdentityDocuments         []IdentityDocumentData          `json:"identity_documents,omitempty"`
+		EmailContacts             []EmailData                     `json:"email_contacts,omitempty"`
+	}{}
+	err := json.Unmarshal(bs, &data)
+	if err != nil {
+		return err
+	}
+	b.PhoneContacts = data.PhoneContacts
+	b.BusinessAddress = data.BusinessAddress
+	b.BusinessType = data.BusinessType
+	// TODO: Add categories
+	b.Names = data.Names
+	b.BusinessDescription = data.BusinessDescription
+	b.EventDates = data.EventDates
+	b.WebsiteURLS = data.WebsiteURLS
+	b.AnnualSalesVolumeRange = data.AnnualSalesVolumeRange
+	b.AverageMonthlyVolumeRange = data.AverageMonthlyVolumeRange
+	b.IdentityDocuments = data.IdentityDocuments
+	b.EmailContacts = data.EmailContacts
+	return nil
+}
+
 type BankAccountTypeData string
 
 const (
@@ -1241,15 +1276,15 @@ type GetPartnerReferralResponse struct {
 
 func (g *GetPartnerReferralResponse) UnmarshalJSON(b []byte) error {
 	response := struct {
-		PartnerReferralID string
-		SubmitterPayerID  string
-		ReferralData      *CreatePartnerReferralParams
+		PartnerReferralID string                       `json:"partner_referral_id"`
+		SubmitterPayerID  string                       `json:"submitter_payer_id"`
+		ReferralData      *CreatePartnerReferralParams `json:"referral_data"`
 		Links             []struct {
-			Href        string
-			Rel         string
-			Method      string
-			Description string
-		}
+			Href        string `json:"href"`
+			Rel         string `json:"rel"`
+			Method      string `json:"method"`
+			Description string `json:"description"`
+		} `json:"links"`
 	}{}
 	err := json.Unmarshal(b, &response)
 	if err != nil {

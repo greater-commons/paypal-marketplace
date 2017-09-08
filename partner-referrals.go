@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 
 	"github.com/greater-commons/paypal-marketplace/partner"
 )
@@ -52,7 +53,7 @@ func (c *Client) GetPartnerReferral(ctx context.Context, partnerReferralID strin
 	r := &request{
 		client:   c,
 		method:   http.MethodGet,
-		endpoint: createPartnerReferralRoute + "/" + partnerReferralID,
+		endpoint: createPartnerReferralRoute + "/" + url.PathEscape(partnerReferralID),
 	}
 	res, err := r.do(ctx)
 	if err != nil {

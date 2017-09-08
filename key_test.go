@@ -1,6 +1,9 @@
 package market
 
-import "os"
+import (
+	"os"
+	"testing"
+)
 
 func GetTestClientID() string {
 	cid := os.Getenv("PAYPAL_CLIENT_ID")
@@ -21,7 +24,7 @@ func GetTestSecret() string {
 func GetTestBNCode() string {
 	bn := os.Getenv("PAYPAL_BN_CODE")
 	if len(bn) == 0 {
-		panic("PAYPAL_BN_CODE environment is not set, but is needed to run tests!\n")
+		panic("PAYPAL_BN_CODE environment variable is not set, but is needed to run tests!\n")
 	}
 	return bn
 }
@@ -32,4 +35,12 @@ func GetTestPayerID() string {
 		panic("PAYPAL_PAYER_ID environment variable is not set, but is needed to run tests!\n")
 	}
 	return pid
+}
+
+func GetPartnerReferralID(t *testing.T) string {
+	partnerID := os.Getenv("PAYPAL_PARTNER_REFERRAL_ID")
+	if partnerID == "" {
+		t.Skip("PAYPAL_PARTNER_REFERRAL_ID environment variable is not set, but is needed for some tests.\n")
+	}
+	return partnerID
 }

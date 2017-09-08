@@ -44,3 +44,11 @@ func GetPartnerReferralID(t *testing.T) string {
 	}
 	return partnerID
 }
+
+func GetTrackingID(t *testing.T) string {
+	trackID := os.Getenv("PAYPAL_TRACKING_ID")
+	if trackID == "" {
+		t.Skip("PAYPAL_TRACKING_ID environment variable is not set, but is needed for some tests.\n")
+	}
+	return trackID
+}

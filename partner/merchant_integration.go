@@ -37,27 +37,27 @@ const (
 )
 
 type ProductData struct {
-	Name          ProductTypeData
-	VettingStatus VettingStatusData
-	Active        bool
+	Name          ProductTypeData   `json:"name"`
+	VettingStatus VettingStatusData `json:"vetting_status"`
+	Active        bool              `json:"active"`
 }
 
 type SignatureData struct {
-	ApiUserName string
-	ApiPassword string
-	Signature   string
+	ApiUserName string `json:"api_user_name"`
+	ApiPassword string `json:"api_password"`
+	Signature   string `json:"signature"`
 }
 
 type CertificateData struct {
-	ApiUserName  string
-	ApiPassword  string
-	Fingerprint  string
-	DownloadLink string
+	ApiUserName  string `json:"api_user_name"`
+	ApiPassword  string `json:"api_password"`
+	Fingerprint  string `json:"fingerprint"`
+	DownloadLink string `json:"download_link"`
 }
 
 type CredentialData struct {
-	Signature   SignatureData
-	Certificate CertificateData
+	Signature   SignatureData   `json:"signature"`
+	Certificate CertificateData `json:"certificate"`
 }
 
 type OAuthIntegrationTypeData string
@@ -77,18 +77,18 @@ const (
 )
 
 type OAuthThirdPartyData struct {
-	PartnerClientID  string
-	MerchantClientID string
-	Scopes           []string
-	AccessToken      string
-	RefreshToken     string
+	PartnerClientID  string   `json:"partner_client_id"`
+	MerchantClientID string   `json:"merchant_client_id"`
+	Scopes           []string `json:"scopes"`
+	AccessToken      string   `json:"access_token"`
+	RefreshToken     string   `json:"refresh_token"`
 }
 
 type OAuthIntegrationData struct {
-	IntegrationType            OAuthIntegrationTypeData
-	IntegrationMethod          IntegrationMethodData
-	Status                     IntegrationStatusData
-	OAuthThirdPartyIntegration OAuthThirdPartyData
+	IntegrationType            OAuthIntegrationTypeData `json:"integration_type"`
+	IntegrationMethod          IntegrationMethodData    `json:"integration_method"`
+	Status                     IntegrationStatusData    `json:"status"`
+	OAuthThirdPartyIntegration OAuthThirdPartyData      `json:"oauth_third_party_integration"`
 }
 
 type LimitationData struct {
@@ -97,15 +97,15 @@ type LimitationData struct {
 }
 
 type GetAccountTrackingResponse struct {
-	TrackingID            string
-	MerchantID            string
-	Products              []ProductData
-	PaymentsReceivable    bool
-	PrimaryEmailConfirmed bool
-	PrimaryEmail          string
-	DateCreated           time.Time
-	GrantedPermissions    []string
-	ApiCredentials        *CredentialData
-	OAuthIntegrations     []OAuthIntegrationData
-	Limitations           []LimitationData
+	TrackingID            string                 `json:"tracking_id"`
+	MerchantID            string                 `json:"merchant_id"`
+	Products              []ProductData          `json:"products"`
+	PaymentsReceivable    bool                   `json:"payments_receivable"`
+	PrimaryEmailConfirmed bool                   `json:"primary_email_confirmed"`
+	PrimaryEmail          string                 `json:"primary_email"`
+	DateCreated           time.Time              `json:"date_created"`
+	GrantedPermissions    []string               `json:"granted_permissions"`
+	ApiCredentials        *CredentialData        `json:"api_credentials"`
+	OAuthIntegrations     []OAuthIntegrationData `json:"oauth_integrations"`
+	Limitations           []LimitationData       `json:"limitations"`
 }

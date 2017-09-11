@@ -9,12 +9,12 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/greater-commons/paypal-marketplace/partner"
+	"github.com/greater-commons/paypal-marketplace/merchant"
 )
 
 const showAccountTrackngRoute = "/v1/customer/partners/%s/merchant-integrations"
 
-func (c *Client) ShowAccountTracking(ctx context.Context, partnerID, trackingID string) (*partner.MerchantDetailsData, error) {
+func (c *Client) ShowAccountTracking(ctx context.Context, partnerID, trackingID string) (*merchant.MerchantDetailsData, error) {
 	endpoint := fmt.Sprintf(showAccountTrackngRoute, url.PathEscape(partnerID))
 	if trackingID != "" {
 		endpoint += "?tracking_id=" + url.QueryEscape(trackingID)
@@ -22,7 +22,7 @@ func (c *Client) ShowAccountTracking(ctx context.Context, partnerID, trackingID 
 	return c.getMerchantData(ctx, endpoint)
 }
 
-func (c *Client) ShowMerchantStatus(ctx context.Context, partnerID, merchantID string, fields []string) (*partner.MerchantDetailsData, error) {
+func (c *Client) ShowMerchantStatus(ctx context.Context, partnerID, merchantID string, fields []string) (*merchant.MerchantDetailsData, error) {
 	endpoint := fmt.Sprintf(showAccountTrackngRoute+"/%s", url.PathEscape(partnerID), url.PathEscape(merchantID))
 	if len(fields) > 0 {
 		endpoint += "?fields=" + url.QueryEscape(strings.Join(fields, ","))
@@ -30,7 +30,7 @@ func (c *Client) ShowMerchantStatus(ctx context.Context, partnerID, merchantID s
 	return c.getMerchantData(ctx, endpoint)
 }
 
-func (c *Client) getMerchantData(ctx context.Context, endpoint string) (*partner.MerchantDetailsData, error) {
+func (c *Client) getMerchantData(ctx context.Context, endpoint string) (*merchant.MerchantDetailsData, error) {
 	r := &request{
 		client:   c,
 		method:   http.MethodGet,
@@ -41,7 +41,7 @@ func (c *Client) getMerchantData(ctx context.Context, endpoint string) (*partner
 		return nil, err
 	}
 	if res.status == http.StatusOK {
-		r := &partner.MerchantDetailsData{}
+		r := &merchant.MerchantDetailsData{}
 		err = json.NewDecoder(res.body).Decode(r)
 		if err != nil {
 			return nil, err

@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/greater-commons/paypal-marketplace/partner"
+	"github.com/greater-commons/paypal-marketplace/merchant"
 )
 
 func TestCreatePartnerReferral(t *testing.T) {
@@ -23,122 +23,122 @@ func TestCreatePartnerReferral(t *testing.T) {
 	}
 	testEmail := "greatercommons-" + strconv.FormatInt(num.Int64(), 10) + "@test.com"
 
-	r, err := c.CreatePartnerReferral(ctx, &partner.CreatePartnerReferralParams{
-		CustomerData: &partner.UserData{
-			CustomerType: partner.CustomerTypeMerchant,
-			PersonDetails: &partner.PersonDetailsData{
+	r, err := c.CreatePartnerReferral(ctx, &merchant.CreatePartnerReferralParams{
+		CustomerData: &merchant.UserData{
+			CustomerType: merchant.CustomerTypeMerchant,
+			PersonDetails: &merchant.PersonDetailsData{
 				EmailAddress: testEmail,
-				Name: &partner.NameOfAPartyData{
+				Name: &merchant.NameOfAPartyData{
 					GivenName: "Test",
 					Surname:   "Test",
 				},
-				HomeAddress: &partner.SimplePostalAddressData{
+				HomeAddress: &merchant.SimplePostalAddressData{
 					Line1:       "123 Test Ave",
 					City:        "Austin",
 					State:       "TX",
 					CountryCode: "US",
 					PostalCode:  "78701",
 				},
-				DateOfBirth: &partner.DateData{
-					EventType: partner.EventTypeBirth,
+				DateOfBirth: &merchant.DateData{
+					EventType: merchant.EventTypeBirth,
 					EventDate: time.Date(1998, time.February, 2, 0, 0, 0, 0, time.UTC),
 				},
-				IdentityDocuments: []partner.IdentityDocumentData{
+				IdentityDocuments: []merchant.IdentityDocumentData{
 					{
-						Type:              partner.IdentityTypeSocialSecurityNumber,
+						Type:              merchant.IdentityTypeSocialSecurityNumber,
 						Value:             "1234",
 						PartialValue:      true,
 						IssuerCountryCode: "US",
 					},
 				},
-				PhoneContacts: []partner.OnboardingCommonUserPhoneData{
+				PhoneContacts: []merchant.OnboardingCommonUserPhoneData{
 					{
-						PhoneNumberDetails: &partner.PhoneDetailsData{
+						PhoneNumberDetails: &merchant.PhoneDetailsData{
 							CountryCode:    "1",
 							NationalNumber: "5121234567",
 						},
-						PhoneType: partner.PhoneTypeHome,
+						PhoneType: merchant.PhoneTypeHome,
 					},
 				},
 			},
-			BusinessDetails: &partner.BusinessDetailsData{
-				BusinessType: partner.BusinessTypeIndividual,
-				Names: []partner.BusinessNameData{
+			BusinessDetails: &merchant.BusinessDetailsData{
+				BusinessType: merchant.BusinessTypeIndividual,
+				Names: []merchant.BusinessNameData{
 					{
-						Type: partner.BusinessNameTypeLegal,
+						Type: merchant.BusinessNameTypeLegal,
 						Name: "Test Test's Store",
 					},
 				},
-				Category: partner.CategoryEducation{
-					partner.EducationSubCategoryVocational,
+				Category: merchant.CategoryEducation{
+					merchant.EducationSubCategoryVocational,
 				},
-				BusinessAddress: &partner.SimplePostalAddressData{
+				BusinessAddress: &merchant.SimplePostalAddressData{
 					Line1:       "123 Test Ave",
 					City:        "Austin",
 					State:       "TX",
 					CountryCode: "US",
 					PostalCode:  "78701",
 				},
-				PhoneContacts: []partner.OnboardingCommonUserPhoneData{
+				PhoneContacts: []merchant.OnboardingCommonUserPhoneData{
 					{
-						PhoneNumberDetails: &partner.PhoneDetailsData{
+						PhoneNumberDetails: &merchant.PhoneDetailsData{
 							CountryCode:    "1",
 							NationalNumber: "5127654321",
 						},
-						PhoneType: partner.PhoneTypeFax,
+						PhoneType: merchant.PhoneTypeFax,
 					},
 				},
-				AverageMonthlyVolumeRange: &partner.CurrencyRangeData{
-					MinimumAmount: &partner.CurrencyData{
+				AverageMonthlyVolumeRange: &merchant.CurrencyRangeData{
+					MinimumAmount: &merchant.CurrencyData{
 						Currency: "USD",
 						Value:    "0",
 					},
-					MaximumAmount: &partner.CurrencyData{
+					MaximumAmount: &merchant.CurrencyData{
 						Currency: "USD",
 						Value:    "4999",
 					},
 				},
 			},
-			ReferralUserPayerID: &partner.AccountIdentifierData{
-				Type:  partner.AccountIdentifierTypePayerID,
+			ReferralUserPayerID: &merchant.AccountIdentifierData{
+				Type:  merchant.AccountIdentifierTypePayerID,
 				Value: GetTestPayerID(),
 			},
-			PartnerSpecificIdentifiers: []partner.PartnerSpecificIdentifierData{
+			PartnerSpecificIdentifiers: []merchant.PartnerSpecificIdentifierData{
 				{
-					Type:  partner.PartnerSpecificIdentifierTypeTrackingID,
+					Type:  merchant.PartnerSpecificIdentifierTypeTrackingID,
 					Value: strconv.FormatInt(num.Int64(), 10),
 				},
 			},
 		},
-		RequestedCapabilities: []partner.CustomerCapabilitiesData{
+		RequestedCapabilities: []merchant.CustomerCapabilitiesData{
 			{
-				Capability: partner.CapabilityApiIntegration,
-				ApiIntegrationPreference: &partner.IntegrationDetailsData{
+				Capability: merchant.CapabilityApiIntegration,
+				ApiIntegrationPreference: &merchant.IntegrationDetailsData{
 					PartnerID: GetTestPayerID(),
-					RestAPIIntegration: &partner.RestAPIIntegrationData{
-						IntegrationMethod: partner.IntegrationMethodPaypal,
-						IntegrationType:   partner.IntegrationTypeThirdParty,
+					RestAPIIntegration: &merchant.RestAPIIntegrationData{
+						IntegrationMethod: merchant.IntegrationMethodPaypal,
+						IntegrationType:   merchant.IntegrationTypeThirdParty,
 					},
-					RestThirdPartyDetails: &partner.RestThirdPartyDetailsData{
+					RestThirdPartyDetails: &merchant.RestThirdPartyDetailsData{
 						PartnerClientID: GetTestClientID(),
-						FeatureList: []partner.ReferralDataRestFeaturesData{
-							partner.ReferralDataRestFeaturesPayment,
-							partner.ReferralDataRestFeaturesRefund,
-							partner.ReferralDataRestFeaturesPartnerFee,
-							partner.ReferralDataRestFeaturesDelayDisbursement,
+						FeatureList: []merchant.ReferralDataRestFeaturesData{
+							merchant.ReferralDataRestFeaturesPayment,
+							merchant.ReferralDataRestFeaturesRefund,
+							merchant.ReferralDataRestFeaturesPartnerFee,
+							merchant.ReferralDataRestFeaturesDelayDisbursement,
 						},
 					},
 				},
 			},
 		},
-		CollectedConsents: []partner.LegalConsentData{
+		CollectedConsents: []merchant.LegalConsentData{
 			{
-				Type:    partner.LegalConsentTypeShareDataConsent,
+				Type:    merchant.LegalConsentTypeShareDataConsent,
 				Granted: true,
 			},
 		},
-		Products: []partner.ReferralDataProductNameData{
-			partner.ReferralDataExpressCheckout,
+		Products: []merchant.ReferralDataProductNameData{
+			merchant.ReferralDataExpressCheckout,
 		},
 	})
 	if err != nil {

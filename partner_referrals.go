@@ -8,14 +8,14 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/greater-commons/paypal-marketplace/partner"
+	"github.com/greater-commons/paypal-marketplace/merchant"
 )
 
 const createPartnerReferralRoute = "/v1/customer/partner-referrals"
 
 // CreatePartnerReferral is used to connect a user's Paypal account with your platform.
 // It is used in both the connected and the managed paths.
-func (c *Client) CreatePartnerReferral(ctx context.Context, params *partner.CreatePartnerReferralParams) (*partner.CreatePartnerReferralResponse, error) {
+func (c *Client) CreatePartnerReferral(ctx context.Context, params *merchant.CreatePartnerReferralParams) (*merchant.CreatePartnerReferralResponse, error) {
 	d, err := json.Marshal(params)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (c *Client) CreatePartnerReferral(ctx context.Context, params *partner.Crea
 		return nil, err
 	}
 	if res.status == http.StatusCreated {
-		r := &partner.CreatePartnerReferralResponse{}
+		r := &merchant.CreatePartnerReferralResponse{}
 		err = json.NewDecoder(res.body).Decode(r)
 		if err != nil {
 			return nil, err
@@ -49,7 +49,7 @@ func (c *Client) CreatePartnerReferral(ctx context.Context, params *partner.Crea
 	}
 }
 
-func (c *Client) GetPartnerReferral(ctx context.Context, partnerReferralID string) (*partner.GetPartnerReferralResponse, error) {
+func (c *Client) GetPartnerReferral(ctx context.Context, partnerReferralID string) (*merchant.GetPartnerReferralResponse, error) {
 	r := &request{
 		client:   c,
 		method:   http.MethodGet,
@@ -60,7 +60,7 @@ func (c *Client) GetPartnerReferral(ctx context.Context, partnerReferralID strin
 		return nil, err
 	}
 	if res.status == http.StatusOK {
-		r := &partner.GetPartnerReferralResponse{}
+		r := &merchant.GetPartnerReferralResponse{}
 		err = json.NewDecoder(res.body).Decode(r)
 		if err != nil {
 			return nil, err

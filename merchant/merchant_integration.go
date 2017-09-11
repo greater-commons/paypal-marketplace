@@ -1,4 +1,4 @@
-package partner
+package merchant
 
 import (
 	"encoding/json"
@@ -138,7 +138,7 @@ func (m *MerchantDetailsData) UnmarshalJSON(b []byte) error {
 	m.PrimaryEmailConfirmed = s.PrimaryEmailConfirmed
 	m.PrimaryEmail = s.PrimaryEmail
 	if s.DateCreated != "" {
-		m.DateCreated, err = time.Parse(s.DateCreated, time.RFC3339)
+		m.DateCreated, err = time.Parse(s.DateCreated, time.RFC3339Nano)
 		if err != nil {
 			return err
 		}

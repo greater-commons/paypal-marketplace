@@ -22,7 +22,7 @@ func TestShowMerchantStatus(t *testing.T) {
 	c := NewClient(ctx, GetTestClientID(), GetTestSecret(), Sandbox)
 	c.BNCode = GetTestBNCode()
 
-	tRes, err := c.ShowMerchantStatus(ctx, GetTestPayerID(), GetMerchantID(t), []string{"payments_receivable"})
+	tRes, err := c.ShowMerchantStatus(ctx, GetTestPayerID(), GetMerchantID(t), nil)
 	if err != nil {
 		t.Fatal("Error attempting to get merchant status:", err)
 	}

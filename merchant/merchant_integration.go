@@ -142,6 +142,8 @@ func (m *MerchantDetailsData) UnmarshalJSON(b []byte) error {
 		if err != nil {
 			return err
 		}
+	} else {
+		m.DateCreated = time.Time{}
 	}
 	m.GrantedPermissions = s.GrantedPermissions
 	m.ApiCredentials = s.ApiCredentials

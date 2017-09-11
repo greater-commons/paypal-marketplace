@@ -88,11 +88,14 @@ func (d *DateData) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	d.EventType = temp.EventType
-	date, err := time.Parse(time.RFC3339Nano, temp.EventDate)
-	if err != nil {
-		return err
+	if temp.EventDate != "" {
+		d.EventDate, err = time.Parse(time.RFC3339Nano, temp.EventDate)
+		if err != nil {
+			return err
+		}
+	} else {
+		d.EventDate = time.Time{}
 	}
-	d.EventDate = date
 	return nil
 }
 

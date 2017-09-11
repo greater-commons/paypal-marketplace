@@ -12,10 +12,10 @@ import (
 	"github.com/greater-commons/paypal-marketplace/merchant"
 )
 
-const showAccountTrackngRoute = "/v1/customer/partners/%s/merchant-integrations"
+const showAccountTrackingRoute = "/v1/customer/partners/%s/merchant-integrations"
 
 func (c *Client) ShowAccountTracking(ctx context.Context, partnerID, trackingID string) (*merchant.MerchantDetailsData, error) {
-	endpoint := fmt.Sprintf(showAccountTrackngRoute, url.PathEscape(partnerID))
+	endpoint := fmt.Sprintf(showAccountTrackingRoute, url.PathEscape(partnerID))
 	if trackingID != "" {
 		endpoint += "?tracking_id=" + url.QueryEscape(trackingID)
 	}
@@ -23,7 +23,7 @@ func (c *Client) ShowAccountTracking(ctx context.Context, partnerID, trackingID 
 }
 
 func (c *Client) ShowMerchantStatus(ctx context.Context, partnerID, merchantID string, fields []string) (*merchant.MerchantDetailsData, error) {
-	endpoint := fmt.Sprintf(showAccountTrackngRoute+"/%s", url.PathEscape(partnerID), url.PathEscape(merchantID))
+	endpoint := fmt.Sprintf(showAccountTrackingRoute+"/%s", url.PathEscape(partnerID), url.PathEscape(merchantID))
 	if len(fields) > 0 {
 		endpoint += "?fields=" + url.QueryEscape(strings.Join(fields, ","))
 	}

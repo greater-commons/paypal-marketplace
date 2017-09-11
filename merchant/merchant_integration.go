@@ -138,7 +138,7 @@ func (m *MerchantDetailsData) UnmarshalJSON(b []byte) error {
 	m.PrimaryEmailConfirmed = s.PrimaryEmailConfirmed
 	m.PrimaryEmail = s.PrimaryEmail
 	if s.DateCreated != "" {
-		m.DateCreated, err = time.Parse(s.DateCreated, time.RFC3339Nano)
+		m.DateCreated, err = time.Parse(time.RFC3339Nano, s.DateCreated)
 		if err != nil {
 			return err
 		}

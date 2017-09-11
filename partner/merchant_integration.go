@@ -1,6 +1,9 @@
 package partner
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type ProductTypeData string
 
@@ -88,7 +91,7 @@ type OAuthIntegrationData struct {
 	IntegrationType            OAuthIntegrationTypeData `json:"integration_type"`
 	IntegrationMethod          IntegrationMethodData    `json:"integration_method"`
 	Status                     IntegrationStatusData    `json:"status"`
-	OAuthThirdPartyIntegration OAuthThirdPartyData      `json:"oauth_third_party_integration"`
+	OAuthThirdPartyIntegration []OAuthThirdPartyData    `json:"oauth_third_party"`
 }
 
 type LimitationData struct {
@@ -96,7 +99,7 @@ type LimitationData struct {
 	Restrictions []string
 }
 
-type GetAccountTrackingResponse struct {
+type MerchantDetailsData struct {
 	TrackingID            string                 `json:"tracking_id"`
 	MerchantID            string                 `json:"merchant_id"`
 	Products              []ProductData          `json:"products"`
@@ -108,4 +111,42 @@ type GetAccountTrackingResponse struct {
 	ApiCredentials        *CredentialData        `json:"api_credentials"`
 	OAuthIntegrations     []OAuthIntegrationData `json:"oauth_integrations"`
 	Limitations           []LimitationData       `json:"limitations"`
+}
+
+func (m *MerchantDetailsData) UnmarshalJSON(b []byte) error {
+	s := struct {
+		TrackingID            string                 `json:"tracking_id"`
+		MerchantID            string                 `json:"merchant_id"`
+		Products              []ProductData          `json:"products"`
+		PaymentsReceivable    bool                   `json:"payments_receivable"`
+		PrimaryEmailConfirmed bool                   `json:"primary_email_confirmed"`
+		PrimaryEmail          string                 `json:"primary_email"`
+		DateCreated           string                 `json:"date_created"`
+		GrantedPermissions    []string               `json:"granted_permissions"`
+		ApiCredentials        *CredentialData        `json:"api_credentials"`
+		OAuthIntegrations     []OAuthIntegrationData `json:"oauth_integrations"`
+		Limitations           []LimitationData       `json:"limitations"`
+	}{}
+	err := json.Unmarshal(b, &s)
+	if err != nil {
+		return err
+	}
+	m.TrackingID = s.TrackingID
+	m.MerchantID = s.MerchantID
+	m.Products = s.Products
+	m.PaymentsReceivable = s.PaymentsReceivable
+	m.PrimaryEmailConfirmed = s.PrimaryEmailConfirmed
+	m.PrimaryEmail = s.PrimaryEmail
+	if s.DateCreated != "" {
+		m.DateCreated, err = time.Parse(s.DateCreated, time.RFC3339)
+		if err != nil {
+			return err
+		}
+	}
+	m.GrantedPermissions = s.GrantedPermissions
+	m.ApiCredentials = s.ApiCredentials
+	m.OAuthIntegrations = s.OAuthIntegrations
+	m.Limitations = s.Limitations
+
+	return nil
 }

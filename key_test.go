@@ -52,3 +52,11 @@ func GetTrackingID(t *testing.T) string {
 	}
 	return trackID
 }
+
+func GetMerchantID(t *testing.T) string {
+	merchID := os.Getenv("PAYPAL_MERCHANT_ID")
+	if merchID == "" {
+		t.Skip("PAYPAL_MERCHANT_ID environment variable is not set, but is needed for some tests.\n")
+	}
+	return merchID
+}

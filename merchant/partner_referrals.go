@@ -69,13 +69,17 @@ type DateData struct {
 }
 
 func (d *DateData) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
+	data := struct {
 		EventType EventTypeData `json:"event_type,omitempty"`
 		EventDate string        `json:"event_date,omitempty"`
 	}{
 		EventType: d.EventType,
 		EventDate: d.EventDate.Format(time.RFC3339Nano),
-	})
+	}
+	if d.EventDate.IsZero() {
+		data.EventDate = ""
+	}
+	return json.Marshal(&data)
 }
 
 func (d *DateData) UnmarshalJSON(b []byte) error {

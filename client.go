@@ -55,6 +55,7 @@ type request struct {
 	method   string
 	endpoint string
 	body     io.Reader
+	headers  http.Header
 }
 
 type response struct {
@@ -69,6 +70,11 @@ func (r *request) do(ctx context.Context) (*response, error) {
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	for k, vs := range r.headers {
+		for _, v := range vs {
+			req.Header.Add(k, v)
+		}
+	}
 	if r.client.BNCode != "" {
 		req.Header.Set("PayPal-Partner-Attribution-Id", r.client.BNCode)
 	}

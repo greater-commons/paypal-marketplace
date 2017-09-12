@@ -46,9 +46,9 @@ func GetPartnerReferralID(t *testing.T) string {
 }
 
 func GetTrackingID(t *testing.T) string {
-	trackID := os.Getenv("PAYPAL_TRACKING_ID")
+	trackID := os.Getenv("PAYPAL_MERCHANT_TRACKING_ID")
 	if trackID == "" {
-		t.Skip("PAYPAL_TRACKING_ID environment variable is not set, but is needed for some tests.\n")
+		t.Skip("PAYPAL_MERCHANT_TRACKING_ID environment variable is not set, but is needed for some tests.\n")
 	}
 	return trackID
 }

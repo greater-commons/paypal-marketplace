@@ -13,19 +13,19 @@ const (
 )
 
 type DetailsData struct {
-	Subtotal         string `json:"subtotal"`
-	Shipping         string `json:"shipping"`
-	Tax              string `json:"tax"`
-	HandlingFee      string `json:"handling_fee"`
-	ShippingDiscount string `json:"shipping_discount"`
-	Insurance        string `json:"insurance"`
-	GiftWrap         string `json:"gift_wrap"`
+	Subtotal         string `json:"subtotal,omitempty"`
+	Shipping         string `json:"shipping,omitempty"`
+	Tax              string `json:"tax,omitempty"`
+	HandlingFee      string `json:"handling_fee,omitempty"`
+	ShippingDiscount string `json:"shipping_discount,omitempty"`
+	Insurance        string `json:"insurance,omitempty"`
+	GiftWrap         string `json:"gift_wrap,omitempty"`
 }
 
 type AmountData struct {
-	Currency string       `json:"currency"`
-	Total    string       `json:"total"`
-	Details  *DetailsData `json:"details,omitempty"`
+	Currency string      `json:"currency"`
+	Total    string      `json:"total"`
+	Details  DetailsData `json:"details"`
 }
 
 type DisplayPhoneData struct {
@@ -47,13 +47,13 @@ type PayeeData struct {
 
 type ItemData struct {
 	Sku         string `json:"sku,omitempty"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Quantity    string `json:"quantity"`
-	Price       string `json:"price"`
-	Currency    string `json:"currency"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Quantity    int    `json:"quantity,omitempty"`
+	Price       string `json:"price,omitempty"`
+	Currency    string `json:"currency,omitempty"`
 	Tax         string `json:"tax,omitempty"`
-	URL         string `json:"url"`
+	URL         string `json:"url,omitempty"`
 }
 
 type NormalizationStatusData string
@@ -195,6 +195,12 @@ func (s *SaleData) MarshalJSON() ([]byte, error) {
 		UpdateTime:     s.UpdateTime.Format(time.RFC3339Nano),
 		Links:          s.Links,
 	}
+	if s.CreateTime.IsZero() {
+		data.CreateTime = ""
+	}
+	if s.UpdateTime.IsZero() {
+		data.UpdateTime = ""
+	}
 	return json.Marshal(&data)
 }
 
@@ -267,7 +273,7 @@ const (
 )
 
 type PurchaseUnitData struct {
-	ReferenceID        string                     `json:"reference_id,omitempty"`
+	ReferenceID        string                     `json:"reference_id"`
 	Amount             *AmountData                `json:"amount,omitempty"`
 	Payee              *PayeeData                 `json:"payee,omitempty"`
 	Description        string                     `json:"description,omitempty"`
@@ -380,6 +386,9 @@ func (p *PayerInfoData) MarshalJSON() ([]byte, error) {
 		TaxIDType:      p.TaxIDType,
 		CountryCode:    p.CountryCode,
 		BillingAddress: p.BillingAddress,
+	}
+	if p.BirthDate.IsZero() {
+		data.BirthDate = ""
 	}
 	return json.Marshal(&data)
 }
@@ -524,4 +533,9 @@ func (c *CreateOrderResponse) UnmarshalJSON(b []byte) error {
 	}
 	c.Links = data.Links
 	return nil
+}
+
+type KeyValuePair struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }

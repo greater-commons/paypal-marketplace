@@ -466,10 +466,15 @@ type PaymentDetailsData struct {
 type OrderStatusData string
 
 const (
-	OrderStatusCreated   OrderStatusData = "CREATED"
-	OrderStatusApproved  OrderStatusData = "APPROVED"
-	OrderStatusCompleted OrderStatusData = "COMPLETED"
-	OrderStatusFailed    OrderStatusData = "FAILED"
+	OrderStatusCreated            OrderStatusData = "CREATED"
+	OrderStatusApproved           OrderStatusData = "APPROVED"
+	OrderStatusCompleted          OrderStatusData = "COMPLETED"
+	OrderStatusFailed             OrderStatusData = "FAILED"
+	OrderStatusCanceled           OrderStatusData = "CANCELED"
+	OrderStatusExpired            OrderStatusData = "EXPIRED"
+	OrderStatusInProgress         OrderStatusData = "IN_PROGRESS"
+	OrderStatusPartiallyCompleted OrderStatusData = "PARTIALLY_COMPLETED"
+	OrderStatusSubmitted          OrderStatusData = "SUBMITTED"
 )
 
 type CreateOrderResponse struct {

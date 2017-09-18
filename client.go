@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 
 	"golang.org/x/oauth2/clientcredentials"
 )
@@ -44,10 +45,15 @@ func NewClient(ctx context.Context, clientID, clientSecret, apiBase string) *Cli
 		ClientSecret: clientSecret,
 		TokenURL:     apiBase + tokenRoute,
 	}
-	return &Client{
+	c := &Client{
 		client:  conf.Client(ctx),
 		apiBase: apiBase,
 	}
+	const timeout = 10 * time.Second
+	if c.client.Timeout == 0 {
+		c.client.Timeout = timeout
+	}
+	return c
 }
 
 type request struct {

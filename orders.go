@@ -157,7 +157,7 @@ func (c *Client) PayOrder(ctx context.Context, orderID string, disbursementMode 
 	if err != nil {
 		return nil, err
 	}
-	if res.status == http.StatusOK {
+	if res.status >= 200 && res.status < 300 {
 		r := &orders.PayOrderResponse{}
 		err = json.NewDecoder(res.body).Decode(r)
 		if err != nil {

@@ -176,7 +176,7 @@ func (c *Client) PayOrder(ctx context.Context, orderID string, disbursementMode 
 	}
 }
 
-func (c *Client) FinalizeDisbursement(ctx context.Context, responsePreference orders.ResponsePreferenceData, transactionID string) (*orders.FinalizeDisbursementResponse, error) {
+func (c *Client) FinalizeDisbursement(ctx context.Context, responsePreference orders.ResponsePreferenceData, transactionID string) error {
 	data := struct {
 		ReferenceID   string `json:"reference_id"`
 		ReferenceType string `json:"reference_type"`
@@ -186,7 +186,7 @@ func (c *Client) FinalizeDisbursement(ctx context.Context, responsePreference or
 	}
 	d, err := json.Marshal(&data)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	r := &request{
 		client:   c,
@@ -199,23 +199,17 @@ func (c *Client) FinalizeDisbursement(ctx context.Context, responsePreference or
 	}
 	res, err := r.do(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	if res.status == http.StatusOK {
-		r := &orders.FinalizeDisbursementResponse{}
-		err = json.NewDecoder(res.body).Decode(r)
+	if res.status != http.StatusNoContent {
+		errorData, err := ioutil.ReadAll(res.body)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		return r, nil
+		return &BadResponse{
+			Status: res.status,
+			Body:   string(errorData),
+		}
 	}
-
-	errorData, err := ioutil.ReadAll(res.body)
-	if err != nil {
-		return nil, err
-	}
-	return nil, &BadResponse{
-		Status: res.status,
-		Body:   string(errorData),
-	}
+	return nil
 }

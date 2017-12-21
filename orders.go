@@ -3,6 +3,7 @@ package market
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -15,6 +16,7 @@ const (
 	createOrderRoute           = "/v1/checkout/orders"
 	getTransactionContextRoute = "/v1/risk/transaction-contexts"
 	disbursePaymentsRoute      = "/v1/payments/referenced-payouts-items"
+	requestRefundRoute         = "/v1/payments/capture/"
 )
 
 func (c *Client) CreateOrder(ctx context.Context, trackingID string, params *orders.CreateOrderParams) (*orders.CreateOrderResponse, error) {
@@ -27,9 +29,6 @@ func (c *Client) CreateOrder(ctx context.Context, trackingID string, params *ord
 		method:   http.MethodPost,
 		endpoint: createOrderRoute,
 		body:     bytes.NewReader(d),
-		headers: map[string][]string{
-			"Paypal-Client-Metadata-Id": []string{trackingID},
-		},
 	}
 	res, err := r.do(ctx)
 	if err != nil {
@@ -210,6 +209,43 @@ func (c *Client) FinalizeDisbursement(ctx context.Context, responsePreference or
 		return r, nil
 	}
 
+	errorData, err := ioutil.ReadAll(res.body)
+	if err != nil {
+		return nil, err
+	}
+	return nil, &BadResponse{
+		Status: res.status,
+		Body:   string(errorData),
+	}
+}
+
+func (c *Client) RequestRefund(ctx context.Context, captureID, clientID, payerID string, params *orders.RequestRefundParams) (*orders.RequestRefundResponse, error) {
+	d, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	authHeader := base64.StdEncoding.EncodeToString([]byte(`{"alg":"none"}`)) + "." + base64.StdEncoding.EncodeToString([]byte(`{"iss":"`+clientID+`","payer_id":"`+payerID+`"}`)) + "."
+	r := &request{
+		client:   c,
+		method:   http.MethodPost,
+		endpoint: requestRefundRoute + captureID + "/refund",
+		body:     bytes.NewReader(d),
+		headers: map[string][]string{
+			"PayPal-Auth-Assertion": []string{authHeader},
+		},
+	}
+	res, err := r.do(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if res.status == http.StatusCreated {
+		r := &orders.RequestRefundResponse{}
+		err = json.NewDecoder(res.body).Decode(r)
+		if err != nil {
+			return nil, err
+		}
+		return r, nil
+	}
 	errorData, err := ioutil.ReadAll(res.body)
 	if err != nil {
 		return nil, err

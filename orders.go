@@ -14,7 +14,7 @@ import (
 const (
 	createOrderRoute           = "/v1/checkout/orders"
 	getTransactionContextRoute = "/v1/risk/transaction-contexts"
-	disbursePaymentsRoute      = "/v1/payments/referenced-payouts-items/pay"
+	disbursePaymentsRoute      = "/v1/payments/referenced-payouts-items"
 )
 
 func (c *Client) CreateOrder(ctx context.Context, trackingID string, params *orders.CreateOrderParams) (*orders.CreateOrderResponse, error) {

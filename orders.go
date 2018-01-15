@@ -19,7 +19,7 @@ const (
 	requestRefundRoute         = "/v1/payments/capture/"
 )
 
-func (c *Client) CreateOrder(ctx context.Context, trackingID string, params *orders.CreateOrderParams) (*orders.CreateOrderResponse, error) {
+func (c *Client) CreateOrder(ctx context.Context, params *orders.CreateOrderParams) (*orders.CreateOrderResponse, error) {
 	d, err := json.Marshal(params)
 	if err != nil {
 		return nil, err

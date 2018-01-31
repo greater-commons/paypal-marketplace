@@ -42,7 +42,7 @@ type PayeeDisplayMetadata struct {
 type PayeeData struct {
 	Email                string                `json:"email,omitempty"`
 	MerchantID           string                `json:"merchant_id,omitempty"`
-	PayeeDisplayMetadata *PayeeDisplayMetadata `json:"payee_display_metadata"`
+	PayeeDisplayMetadata *PayeeDisplayMetadata `json:"payee_display_metadata,omitempty"`
 }
 
 type ItemData struct {

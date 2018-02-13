@@ -969,7 +969,7 @@ func (b *BusinessDetailsData) MarshalJSON() ([]byte, error) {
 		Names                     []BusinessNameData              `json:"names,omitempty"`
 		BusinessDescription       string                          `json:"business_description,omitempty"`
 		EventDates                []DateData                      `json:"event_dates,omitempty"`
-		WebsiteURLS               []string                        `json:"website_urls"`
+		WebsiteURLS               []string                        `json:"website_urls,omitempty"`
 		AnnualSalesVolumeRange    *CurrencyRangeData              `json:"annual_sales_volume_range,omitempty"`
 		AverageMonthlyVolumeRange *CurrencyRangeData              `json:"average_monthly_volume_range,omitempty"`
 		IdentityDocuments         []IdentityDocumentData          `json:"identity_documents,omitempty"`

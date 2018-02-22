@@ -140,21 +140,23 @@ type CaptureData struct {
 	Links          []LinkData            `json:"links,omitempty"`
 }
 
-type RefundStatusData string
+type RefundStateData string
 
 const (
-	RefundStatusPending   RefundStatusData = "PENDING"
-	RefundStatusCompleted RefundStatusData = "COMPLETED"
-	RefundStatusFailed    RefundStatusData = "FAILED"
+	RefundStatusPending   RefundStateData = "pending"
+	RefundStatusCompleted RefundStateData = "completed"
+	RefundStatusFailed    RefundStateData = "failed"
 )
 
 type RefundData struct {
-	ID        string           `json:"id,omitempty"`
-	Amount    *AmountData      `json:"amount,omitempty"`
-	CaptureID string           `json:"capture_id,omitempty"`
-	SaleID    string           `json:"sale_id,omitempty"`
-	Status    RefundStatusData `json:"status,omitempty"`
-	Links     []LinkData       `json:"links,omitempty"`
+	ID            string          `json:"id,omitempty"`
+	State         RefundStateData `json:"state,omitempty"`
+	Amount        *AmountData     `json:"amount,omitempty"`
+	RefundToPayer *AmountData     `json:"refund_to_payer"`
+	InvoiceNumber string          `json:"invoice_number"`
+	Custom        string          `json:"custom"`
+	ParentPayment string          `json:"parent_payment"`
+	Links         []LinkData      `json:"links,omitempty"`
 }
 
 type SaleStateData string

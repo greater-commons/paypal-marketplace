@@ -10,6 +10,7 @@ type PayOrderResponse struct {
 	PurchaseUnits  []PurchaseUnitData  `json:"purchase_units"`
 	CreateTime     time.Time           `json:"create_time"`
 	UpdateTime     time.Time           `json:"update_time"`
+	ID             string              `json:"id,omitempty"`
 	Links          []LinkData          `json:"links"`
 	PaymentDetails *PaymentDetailsData `json:"payment_details"`
 }

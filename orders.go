@@ -200,7 +200,7 @@ func (c *Client) FinalizeDisbursement(ctx context.Context, responsePreference or
 	if err != nil {
 		return nil, err
 	}
-	if res.status == http.StatusOK {
+	if res.status == http.StatusOK || res.status == http.StatusCreated {
 		r := &orders.FinalizeDisbursementResponse{}
 		err = json.NewDecoder(res.body).Decode(r)
 		if err != nil {
